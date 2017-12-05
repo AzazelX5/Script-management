@@ -13,7 +13,7 @@ data_input = sys.argv
 
 
 def get_script():
-    req = urllib2.Request('http://127.0.0.1:8080/script/get_script/')
+    req = urllib2.Request('http://108.61.86.91/script/get_script/')
     res = urllib2.urlopen(req)
     script_list = json.loads(res.read())
 
@@ -54,7 +54,7 @@ def save_script():
         for name in name_list:
             with open(name, 'r') as f:
                 script_dict[name] = f.read()
-        url = 'http://127.0.0.1:8080/script/save_script/'
+        url = 'http://108.61.86.91/script/save_script/'
         req = urllib2.Request(url, json.dumps(script_dict))
         res = urllib2.urlopen(req)
         result = res.read()
@@ -84,9 +84,9 @@ def save_script():
 
 def search_script(num=8, id=None):
     if id is None:
-        url = 'http://127.0.0.1:8080/script/get_script/'
+        url = 'http://108.61.86.91/script/get_script/'
     else:
-        url = 'http://127.0.0.1:8080/script/get_script/' + id
+        url = 'http://108.61.86.91/script/get_script/' + id
     req = urllib2.Request(url)
     try:
         res = urllib2.urlopen(req)
@@ -117,7 +117,7 @@ elif len(data_input) == 2 and data_input[1] == 'ls':
     search_script()
 elif len(data_input) == 3 and data_input[1] == 'ls' and data_input[2] == '-a':
     search_script(num=36)
-elif data_input[1] == 'search':
+elif len(data_input) >2 and data_input[1] == 'search':
     if len(data_input) == 3:
         search_script(id=data_input[2])
     elif len(data_input) == 4:
@@ -126,5 +126,5 @@ elif data_input[1] == 'search':
         elif data_input[3] == '-a':
             search_script(num=36, id=data_input[2])
 else:
-    print 'push: Updated\npull: Download\nls: View'
+    print 'push: Updated\npull: Download\nls [-a]: View\nsearch [-a] id: Fuzzy query'
 
