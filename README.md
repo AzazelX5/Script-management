@@ -4,8 +4,8 @@
 > 
 > 说明：
 > > 1.目录结构
-> > > src/ : 脚本管理服务器端代码
-> > > Dockerfile: docker镜像制作
+> > > src/ : 脚本管理服务器端代码</br>
+> > > Dockerfile: docker镜像制作</br>
 > > > script.py : 本地管理脚本与服务器同步的脚本
 > > 
 > > 2.使用方法
