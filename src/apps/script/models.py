@@ -8,6 +8,9 @@ from django.utils.timezone import now
 
 
 class Script(models.Model):
+    """
+    脚本对象
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     content = models.TextField(null=True)
