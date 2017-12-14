@@ -2,11 +2,9 @@ FROM python:2.7.10
 
 WORKDIR /app
 
-COPY src/requirements.txt /app/requirements.txt
+COPY src/ /app
 
 RUN pip install --upgrade pip && pip install -r requirements.txt
-
-COPY src/ /app
 
 EXPOSE 8000
 
