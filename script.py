@@ -8,13 +8,15 @@ import os
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+base_url = 'http://0.0.0.0:8080/script/'
+
 # 记录命令行输入内容
 data_input = sys.argv
 
 
 # 获取脚本函数
 def get_script():
-    req = urllib2.Request('http://0.0.0.0/script/get_script/')
+    req = urllib2.Request(base_url + 'get_script/')
     res = urllib2.urlopen(req)
     script_list = json.loads(res.read())
 
@@ -54,6 +56,11 @@ def get_script():
 # 上传脚本函数
 def save_script():
     name_list = os.listdir('.')
+
+    # 解决mac上自动生成的.DS_Store文件
+    if '.DS_Store' in name_list:
+        name_list.remove('.DS_Store')
+
     # 判断是否有脚本可以上传
     if len(name_list) == 1:
         # 没有脚本可上传提示信息
@@ -65,7 +72,7 @@ def save_script():
         for name in name_list:
             with open(name, 'r') as f:
                 script_dict[name] = f.read()
-        url = 'http://0.0.0.0/script/save_script/'  # 服务器地址
+        url = base_url + 'save_script/'  # 服务器地址
         req = urllib2.Request(url, json.dumps(script_dict))
         res = urllib2.urlopen(req)
         result = res.read()
@@ -101,9 +108,9 @@ def save_script():
 def search_script(num=8, id=None):
     # 判断是查看单个脚本还是全部
     if id is None:
-        url = 'http://0.0.0.0/script/get_script/'
+        url = base_url + 'get_script/'
     else:
-        url = 'http://0.0.0.0/script/get_script/' + id
+        url = base_url + 'get_script/' + id
     req = urllib2.Request(url)
     try:
         res = urllib2.urlopen(req)
@@ -127,6 +134,16 @@ def search_script(num=8, id=None):
         print 'A list of all the scripts in the server:\nID' + ' ' * (num + 3) + 'NAME\n{}'.format(str_script[:-1])
 
 
+# 删除脚本函数
+def del_script(id_list):
+    url = base_url + 'del_script/'
+
+    req = urllib2.Request(url)
+    req.get_method = lambda: 'DELETE'
+    res = urllib2.urlopen(req, json.dumps(id_list))
+    print res.read()
+
+
 # 判断请求
 if len(data_input) == 2 and data_input[1] == 'push':
     # 将本地脚本全部上传到服务器
@@ -140,7 +157,7 @@ elif len(data_input) == 2 and data_input[1] == 'ls':
 elif len(data_input) == 3 and data_input[1] == 'ls' and data_input[2] == '-a':
     # 查看服务器中已存在的脚本，-a 参数表示显示全部UUID
     search_script(num=36)
-elif len(data_input) >2 and data_input[1] == 'search':
+elif len(data_input) > 2 and data_input[1] == 'search':
     # 按UUID模糊查找服务器中的脚本，查询结果默认显示8位UUID， -a参数表示显示全部UUID
     if len(data_input) == 3:
         search_script(id=data_input[2])
@@ -149,6 +166,9 @@ elif len(data_input) >2 and data_input[1] == 'search':
             search_script(num=36, id=data_input[3])
         elif data_input[3] == '-a':
             search_script(num=36, id=data_input[2])
+elif len(data_input) > 2 and data_input[1] == 'del':
+    id_list = data_input[2:]
+    del_script(id_list)
 else:
     print 'push: Updated\npull: Download\nls [-a]: View\nsearch [-a] id: Fuzzy query'
 

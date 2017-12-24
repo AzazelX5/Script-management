@@ -1,3 +1,4 @@
+# encoding:utf-8
 import json
 from django.core import serializers
 from . import models
@@ -15,7 +16,8 @@ def get_script(request, script_id=None):
     if script_id is None:
         json_str = serializers.serialize('json', models.Script.objects.all())
     else:
-        json_str = serializers.serialize('json', models.Script.objects.filter(id__startswith=script_id))
+        json_str = serializers.serialize('json', models.Script.objects.
+                                         filter(id__startswith=script_id))
     return HttpResponse(json_str, content_type="application/json")
 
 
@@ -38,12 +40,31 @@ def save_script(request):
                     name_exist.append('    ' + key + '\n')
                 else:
                     # 不存在则在数据库中新建，之后返回保存成功的脚本名单
-                    models.Script.objects.create(name=key, content=script_dict[key])
+                    models.Script.objects.create(name=key,
+                                                 content=script_dict[key])
                     name_success.append('    ' + key + '\n')
-            json_str = json.dumps({'success': name_success, 'exist': name_exist})
+            json_str = json.dumps({'success': name_success,
+                                   'exist': name_exist})
         except BaseException:
             return HttpResponse('Upload failed')
         return HttpResponse(json_str, content_type="application/json")
+    else:
+        return HttpResponse('Wrong request method')
+
+
+def del_script(request):
+    """
+    删除脚本
+    :param request:
+    :return:
+    """
+    if request.method == 'DELETE':
+        id_list = json.loads(request.body)
+        try:
+            models.Script.objects.filter(id__in=id_list).delete()
+        except BaseException:
+            return HttpResponse('Failed to delete')
+        return HttpResponse('Successfully deleted')
     else:
         return HttpResponse('Wrong request method')
 

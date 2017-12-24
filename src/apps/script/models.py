@@ -1,3 +1,4 @@
+# encoding:utf-8
 from __future__ import unicode_literals
 
 from django.db import models
@@ -14,7 +15,6 @@ class Script(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=20)
     content = models.TextField(null=True)
-
     creat_time = models.DateTimeField(null=True, auto_now=now())
 
     def __unicode__(self):
